@@ -1,18 +1,16 @@
 import { execFileSync } from "child_process";
 
+const TOKEN = "ghp_xxxxxxxxxxxxxxxxxxxx"; // ← 你的 token
+
 function hasSecretWriteToken() {
-  return Boolean(process.env.PAT || process.env.GH_TOKEN);
+  return Boolean(TOKEN);
 }
 
 function setRepoSecret(name, value) {
-  const repository = process.env.GITHUB_REPOSITORY;
-  const token = process.env.GH_TOKEN || process.env.PAT;
+  const repository = process.env.GITHUB_REPOSITORY; // 这个也得有值
 
   if (!repository) {
     throw new Error("GITHUB_REPOSITORY 未配置");
-  }
-  if (!token) {
-    throw new Error("PAT/GH_TOKEN 未配置");
   }
 
   execFileSync("gh", ["secret", "set", name, "--repo", repository], {
@@ -20,7 +18,7 @@ function setRepoSecret(name, value) {
     encoding: "utf8",
     env: {
       ...process.env,
-      GH_TOKEN: token,
+      GH_TOKEN: TOKEN,
     },
     stdio: ["pipe", "pipe", "pipe"],
   });
